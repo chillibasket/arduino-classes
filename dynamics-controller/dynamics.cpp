@@ -2,16 +2,16 @@
  * DYNAMICS CONTROLLER CLASS
  *
  * Code by: Simon B.
- * Email: 	hello@chillibasket.com
+ * Email:   hello@chillibasket.com
  * * * * * * * * * * * * * * * * * * * * * * */
 
 #include "dynamics.hpp"
 
 /*
- * \Func 	Dynamics()
- * \Desc 	Default constructor
+ * \Func  Dynamics::Dynamics()
+ * \Desc  Default constructor
  */
-Dynamics::Dynamics(){
+Dynamics::Dynamics() {
 	Dynamics(0, 0, 0, 0, 0.5);
 }
 
@@ -45,8 +45,8 @@ Dynamics::Dynamics(int _type, float _maxVel, float _acc, float _dec, float _thre
 
 
 /*
- * \Func 	~Dynamics()
- * \Desc 	Default destructer
+ * \Func  ~Dynamics()
+ * \Desc  Default destructer
  */
 Dynamics::~Dynamics() {
 
@@ -54,9 +54,9 @@ Dynamics::~Dynamics() {
 
 
 /*
- * \Func 	setTargetPos(float _targetPos, float _scale)
- * \Para 	(_targetPos) New target position value
- * \Para 	(_scale) New factor by which to scale the output position 
+ * \Func  void Dynamics::setTargetPos(float _targetPos, float _scale)
+ * \Para  (_targetPos) New target position value
+ * \Para  (_scale) New factor by which to scale the output position 
  */
 void Dynamics::setTargetPos(float _targetPos, float _scale) {
 	targetPos = _targetPos;
@@ -73,33 +73,25 @@ void Dynamics::setTargetPos(float _target) {
 
 
 /*
- * \Func 	setTargetVel(float _targetVel)
- * \Para 	(_targetVel) New target velocity value
+ * \Func  void Dynamics::setTargetVel(float _targetVel)
+ * \Para  (_targetVel) New target velocity value
  */
 void Dynamics::setTargetVel(float _targetVel) {
-	// curPos remains unchanged
+	if (scale != 1) curPos = curPos * scale;
 	targetVel = _targetVel;
 	if (targetVel >  maxVel) targetVel =  maxVel;
 	if (targetVel < -maxVel) targetVel = -maxVel;
 	type = 1;
 	scale = 1;
-	noTasks = false;
+	noTasks = true;
 }
 
-/*
-void Dynamics::setType(int _type) { 
-	type = _type; 
-	// To avoid sudden changes, set target to equal current parameters
-	if (type == 0) target = curPos;
-	else if (type == 1) target = curVel;
-}
-*/
 
 /*
- * \Func 	update(double dT)
- * \Desc 	Update the current position according to the kinematic formulae
- * \Para 	(dT) The time change since function was last called
- * \Retu 	THe new position of the system
+ * \Func  float Dynamics::updateVal(float dT)
+ * \Desc  Update the current position according to the kinematic formulae
+ * \Para  (dT) The time change since function was last called
+ * \Retu  THe new position of the system
  */
 float Dynamics::updateVal(float dT) {
 
@@ -141,9 +133,6 @@ float Dynamics::updateVal(float dT) {
 	} else if (type == 1) {
 
 		float velError = targetVel - curVel;
-		//Serial.print(targetVel); Serial.print("tar, ");
-		//Serial.print(curVel); Serial.print("vel, ");
-		//Serial.print(velError); Serial.print("err, ");
 
 		// If velocity error is above the threshold
 		if (abs(velError) > threshold) {
@@ -158,8 +147,7 @@ float Dynamics::updateVal(float dT) {
 			float dV = acceleration * dT / 1000.0;
 			if (abs(dV) < abs(velError)) curVel += dV;
 			else curVel = targetVel;
-			//curVel = targetVel;
-			//Serial.print(curVel); Serial.print("newVel, ");
+
 		} else {
 			curVel = targetVel;
 		}
@@ -168,22 +156,13 @@ float Dynamics::updateVal(float dT) {
 		if (curVel > maxVel) curVel = maxVel;
 		if (curVel < -maxVel) curVel = -maxVel;
 
-		//Serial.print(curPos); Serial.print("pos, ");
 		// Update current position
 		curPos += curVel * dT / 1000.0;
-
-		//Serial.print(curPos); Serial.print("newPos, ");
-		//Serial.print(curVel); Serial.print("newVel, ");
-		//Serial.print(acc); Serial.print("acc, ");
-		//Serial.print(dec); Serial.print("dec, ");
 	}
 
 	if (isnan(curPos)) {
 		Serial.println("ERROR: invalid position number...");
-		while(1) {
-			analogWrite(9, 0);
-			analogWrite(10, 0);
-		}
+		curPos = targetPos;
 	}
 
 	return curPos * scale;
@@ -201,8 +180,8 @@ float Dynamics::updateVal() {
 
 
 /*
- * \Func 	void Dynamics::reset()
- * \Desc 	Reset all the runtime variables
+ * \Func  void Dynamics::reset()
+ * \Desc  Reset all the runtime variables
  */
 void Dynamics::reset() { 
 	curPos = 0;
@@ -215,17 +194,17 @@ void Dynamics::reset() {
 
 
 /*
- * \Func 	void Dynamics::resetCnts()
- * \Desc 	Reset the current position
+ * \Func  void Dynamics::resetPos()
+ * \Desc  Reset the current position
  */
-void Dynamics::resetCnts() {
+void Dynamics::resetPos() {
 	curPos = 0;
 }
 
 
 /*
- * \Func 	bool Dynamics::ready()
- * \Desc 	Check if system has completed its target move
+ * \Func  bool Dynamics::ready()
+ * \Desc  Check if system has completed its target move
  */
 bool Dynamics::ready() { 
 	if (noTasks) return true;

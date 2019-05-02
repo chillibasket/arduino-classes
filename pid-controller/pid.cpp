@@ -8,8 +8,8 @@
 #include "pid.hpp"
 
 /*
- * \Func 	PID::PID()
- * \Desc 	Default constructor
+ * \Func  PID::PID()
+ * \Desc  Default constructor
  */
 PID::PID(){
 	PID(0, 0, 0, -1, -1);
@@ -39,8 +39,8 @@ PID::PID(float nP, float nI, float nD, float maxVal, float thresh) {
 
 
 /*
- * \Func 	~PID::PID()
- * \Desc 	Default destructer
+ * \Func  ~PID::PID()
+ * \Desc  Default destructer
  */
 PID::~PID(){
 
@@ -48,11 +48,11 @@ PID::~PID(){
 
 
 /*
- * \Func 	void PID::setConst(float nP, float nI, float nD)
- * \Desc 	Update the PID constant gain terms
- * \Para 	(nP) New proportional gain
- * \Para 	(nI) New integral gain
- * \Para 	(nD) New derivative gain
+ * \Func  void PID::setConst(float nP, float nI, float nD)
+ * \Desc  Update the PID constant gain terms
+ * \Para  (nP) New proportional gain
+ * \Para  (nI) New integral gain
+ * \Para  (nD) New derivative gain
  */
 void PID::setConst(float nP, float nI, float nD) {
 	Kp = nP;
@@ -62,8 +62,8 @@ void PID::setConst(float nP, float nI, float nD) {
 
 
 /*
- * \Func 	void PID::reset()
- * \Desc 	Reset the PID controller accumulators
+ * \Func  void PID::reset()
+ * \Desc  Reset the PID controller accumulators
  */
 void PID::reset() {
 	oldCurrent = 0;
@@ -73,12 +73,12 @@ void PID::reset() {
 
 
 /*
- * \Func 	void PID::update(float target, float current, float dT)
- * \Desc 	Calculate a new PID output value
- * \Para 	(target) The target position of the system
- * \Para 	(current) The current position of the system
- * \Para 	(dT) Time since PID value was last updated
- * \Retu 	The new PID output value
+ * \Func  void PID::update(float target, float current, float dT)
+ * \Desc  Calculate a new PID output value
+ * \Para  (target) The target position of the system
+ * \Para  (current) The current position of the system
+ * \Para  (dT) Time since PID value was last updated
+ * \Retu  The new PID output value
  */
 float PID::updateVal(float target, float current, float dT) {
 	// Calculate Error
