@@ -1,5 +1,5 @@
 # arduino-classes
-Usefull C++ classes for Arduino programming
+Useful C++ classes for Arduino programming
 
 
 ## Dynamics Controller
@@ -14,6 +14,14 @@ Both modes can be used smoothly in sequence by setting the new position/velocity
 Basic implementation of a Proportional, Integral and Derivative controller. The controller has several additional features, which can be enabled/disabled as required:
 1. **Maximum output threshold** - the output value will be saturated if it exceeds this value.
 1. **Cut-off threshold** - the controller will turn off if the error is below this threshold.
+
+
+## Timer Interrupts
+Code to set up timer interrupts for the Atmega 328 (Arduino Uno). The functions can calculate and set the timer0, timer1, and timer2 parameters for any valid frequency. 
+
+
+## Generic Queue
+A template queue class that can be set up to work with items of any data type. It has all the standard FIFO queue functions such as `push(newItem)`, `pop()`, and `peak()`. It can also be used as a LIFO queue by using `pop_back()` instead of `pop()`. By uncommenting the line `#define DYNAMIC_SIZE`, the class will automatically allocate more space to the queue if it becomes too full.
 
 
 ## Usage
