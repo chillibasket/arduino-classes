@@ -2,8 +2,8 @@
  * GENERIC QUEUE CLASS
  * Ring Buffer, for use as FIFO or LIFO queue
  *
- * Code by: Simon B.
- * Email:   hello@chillibasket.com
+ * Code by:  Simon Bluett
+ * Email:    hello@chillibasket.com
  * * * * * * * * * * * * * * * * * * * * * * */
 
 #ifndef QUEUE_HPP
@@ -29,7 +29,7 @@ public:
 		qBack = 0;
 		qSize = 0;
 		maxSize = max;
-		qData = new T[max];   
+		qData = new T[max];
 	};
 
 	// Default destructor
@@ -49,8 +49,6 @@ public:
 	bool empty();
 	inline int size();
 	void clear();
-
-	
 
 private:
 	int qFront, qBack, qSize, maxSize;
@@ -78,7 +76,7 @@ template<class T> void Queue<T>::push(const T &item) {
 	if(qSize < maxSize) {
 		// Add item to the queue
 		qData[qBack++] = item;
-    	qSize++;
+		qSize++;
 
 		// Ensure circular buffer wraps around
 		if (qBack >= maxSize) qBack -= maxSize;
@@ -102,7 +100,7 @@ template<class T> void Queue<T>::push(const T &item) {
 		qBack = qSize;
 		maxSize = maxSize*2;
 
-    	// Delete the old queue and transfer the new one into its place
+		// Delete the old queue and transfer the new one into its place
 		delete[] qData;
 		qData = newQueue;
 
@@ -130,8 +128,8 @@ template<class T> T Queue<T>::pop() {
 
 		// Ensure circular buffer wraps around
 		if (qFront >= maxSize) qFront -= maxSize;
-    	return result;
-    } 
+		return result;
+	}
 }
 
 
@@ -155,8 +153,8 @@ template<class T> T Queue<T>::pop_back() {
 
 		// Ensure circular buffer wraps around
 		if (qBack < 0) qBack += maxSize;
-    	return result;
-    } 
+		return result;
+	}
 }
 
 
@@ -169,9 +167,9 @@ template<class T> T Queue<T>::front() {
 	else return qData[qFront];
 }
 
-// "peek" is the same as "qFront"
+// "peek" is the same as "front"
 template<class T> T Queue<T>::peek() {
-	return qFront();
+	return front();
 }
 
 
