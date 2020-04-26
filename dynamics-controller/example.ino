@@ -23,7 +23,7 @@
 
 
 // --- Include the library ---
-/* Make sure that the files "dynamics.cpp" and "dynamic.h"
+/* Make sure that the files "dynamics.cpp" and "dynamics.hpp"
  * are included in the same folder as the Arduino sketch */
 #include "dynamics.hpp"
 #include <Servo.h>
