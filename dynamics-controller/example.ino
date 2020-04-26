@@ -69,7 +69,7 @@ void setup() {
 	// set the starting angle as well
 	dynoController.reset(10);
 
-	// Ok, no we want to move the servo to the 180° position
+	// Ok, now we want to move the servo to the 180° position
 	dynoController.setTargetPos(180);
 
 	/* If we suddenly decide we want to change the maximum velocity to 30°/s */
@@ -79,10 +79,10 @@ void setup() {
 	//dynoController.setAcc(15);
 	//dynoController.setDec(5);
 
-	/* To read what the current velocity and acceleration settings are */
-	//float currentVelocity = dynoController.getMaxVel();
-	//float currentAcceleration = dynoController.getAcc();
-	//float currentDeceleration = dynoController.getDec();
+	/* To read what the velocity and acceleration settings are */
+	//float maxVelocity = dynoController.getMaxVel();
+	//float acceleration = dynoController.getAcc();
+	//float deceleration = dynoController.getDec();
 }
 
 
