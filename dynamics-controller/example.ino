@@ -58,7 +58,6 @@ unsigned long updateTimer = 0;
 void setup() {
 
 	Serial.begin(9600);
-	while(!Serial);
 	Serial.println("Starting program");
 
 	myservo.attach(9);  // attaches the servo on pin 9 to the servo object
@@ -72,6 +71,18 @@ void setup() {
 
 	// Ok, no we want to move the servo to the 180° position
 	dynoController.setTargetPos(180);
+
+	/* If we suddenly decide we want to change the maximum velocity to 30°/s */
+	//dynoController.setMaxVel(30);
+
+	/* To change the acceleration to 15°/s^2 and deceleration to 5°/s^2 */
+	//dynoController.setAcc(15);
+	//dynoController.setDec(5);
+
+	/* To read what the current velocity and acceleration settings are */
+	//float currentVelocity = dynoController.getMaxVel();
+	//float currentAcceleration = dynoController.getAcc();
+	//float currentDeceleration = dynoController.getDec();
 }
 
 
@@ -89,6 +100,9 @@ void loop() {
 
 		// Set the new servo position
 		myservo.write(int(currentAngle));
+
+		Serial.print("Current servo angle: ");
+		Serial.println(currentAngle);
 
 		// If the servo has reached the desired position, stop the program
 		if (dynoController.ready()) {

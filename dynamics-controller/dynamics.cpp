@@ -151,7 +151,6 @@ float Dynamics::update(float dT) {
 		curPos = targetPos;
 	}
 
-	Serial.print(curPos); Serial.print(","); Serial.println(curVel);
 	return curPos * scale;
 }
 
