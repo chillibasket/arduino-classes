@@ -32,16 +32,16 @@
 // --- Instantiate the class ---
 /* If you want the acceleration and deceleration to be the same
  * FORMAT: Dynamics(type, max velocity, acceleration) */
-// Dynamics dynoController(0, 20, 10);
+// Dynamics dynaController(0, 20, 10);
 
 /* If the acceleration and deceleration are different
  * FORMAT: Dynamics(type, max velocity, acceleration, deceleration) */
-Dynamics dynoController(0, 20, 10, 8);
+Dynamics dynaController(0, 20, 10, 8);
 
 /* By default the dynamics controller turns off when it is within 0.5 units
  * of the target position. This threshold value can be changed in the declaration
  * FORMAT: Dynamics(type, max velocity, acceleration, deceleration, threshold) */
-// Dynamics dynoController(0, 20, 10, 8, 0.1);
+// Dynamics dynaController(0, 20, 10, 8, 0.1);
 
 Servo myservo;
 
@@ -67,22 +67,22 @@ void setup() {
 
 	// By default the controller starts at 0, so we need to
 	// set the starting angle as well
-	dynoController.reset(10);
+	dynaController.reset(10);
 
 	// Ok, now we want to move the servo to the 180° position
-	dynoController.setTargetPos(180);
+	dynaController.setTargetPos(180);
 
 	/* If we suddenly decide we want to change the maximum velocity to 30°/s */
-	//dynoController.setMaxVel(30);
+	//dynaController.setMaxVel(30);
 
 	/* To change the acceleration to 15°/s^2 and deceleration to 5°/s^2 */
-	//dynoController.setAcc(15);
-	//dynoController.setDec(5);
+	//dynaController.setAcc(15);
+	//dynaController.setDec(5);
 
 	/* To read what the velocity and acceleration settings are */
-	//float maxVelocity = dynoController.getMaxVel();
-	//float acceleration = dynoController.getAcc();
-	//float deceleration = dynoController.getDec();
+	//float maxVelocity = dynaController.getMaxVel();
+	//float acceleration = dynaController.getAcc();
+	//float deceleration = dynaController.getDec();
 }
 
 
@@ -96,7 +96,7 @@ void loop() {
 		updateTimer = millis() + (1000 / UPDATE_FREQUENCY);
 
 		// Update the controller
-		float currentAngle = dynoController.update();
+		float currentAngle = dynaController.update();
 
 		// Set the new servo position
 		myservo.write(int(currentAngle));
@@ -105,7 +105,7 @@ void loop() {
 		Serial.println(currentAngle);
 
 		// If the servo has reached the desired position, stop the program
-		if (dynoController.ready()) {
+		if (dynaController.ready()) {
 			Serial.println("Target position reached");
 			while(1) {}
 		}
