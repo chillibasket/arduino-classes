@@ -1,8 +1,10 @@
 /* * * * * * * * * * * * * * * * * * * * * * *
  * DYNAMICS CONTROLLER CLASS HEADER
  *
- * Code by: Simon B.
+ * Code by: Simon Bluett
  * Email:   hello@chillibasket.com
+ * Version: 1.1
+ * Date: 26th April 2020
  * * * * * * * * * * * * * * * * * * * * * * */
 
 #ifndef DYNAMICS_HPP
@@ -15,16 +17,11 @@ class Dynamics {
 
 public:
 	// Constructors
-	Dynamics();
-	Dynamics(int _type);
-	Dynamics(int _type, float _maxVel, float _setAcc);
-	Dynamics(int _type, float _maxVel, float _setAcc, float _setDec);
-	Dynamics(int _type, float _maxVel, float _setAcc, float _setDec, float _thresh);
+	Dynamics(int _type = 0, float _maxVel = 100, float _setAcc = 50, float _setDec = -1, float _thresh = 0.5);
 
 	// Functions
 	// Set target position/velocity
-	void setTargetPos(float _target);
-	void setTargetPos(float _target, float _scale);
+	void setTargetPos(float _target, float _scale = 1);
 	void setTargetVel(float _target);
 
 	// Get the current target position or velocity values
@@ -43,16 +40,16 @@ public:
 	float getScale() { return scale; };
 
 	// Reset the controller
-	void reset();
-	void resetPos();
+	void reset(float newPos = 0);
+	void resetPos(float newPos = 0);
 
 	// Check if the controller has reached the desired position
 	bool ready();
 
 	// Update and get the new position value
 	// dT = time since last call in milliseconds
-	float updateVal(float dT);
-	float updateVal();
+	float update(float dT);
+	float update();
 
 	// Default destructor
 	~Dynamics(); 

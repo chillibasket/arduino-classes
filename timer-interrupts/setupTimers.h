@@ -2,10 +2,10 @@
  * SETUP TIMERS FOR ATMEGA 328
  * (Arduino Uno)
  *
- * Note: 	Use with caution - it may affect other systems:
- * 			Timer0 is used by delay(), millis(), micros()
- * 			Timer1 is used by the servo library
- * 			Timer2 is used by tone(), notone()
+ * Note:    Use with caution - it may affect other systems:
+ *          Timer0 is used by delay(), millis(), micros()
+ *          Timer1 is used by the servo library
+ *          Timer2 is used by tone(), notone()
  *
  * Timer0 and Timer2 are 8bit clocks
  * Timer1 is 16bit
@@ -111,7 +111,7 @@ void setupTimer0(uint16_t frequency) {
 	// Enable the timer compare interrupt
 	TIMSK0 |= (1 << OCIE0A);
 
-	// Allows interrupts		
+	// Allows interrupts
 	sei();
 }
 
@@ -153,7 +153,7 @@ void setupTimer1(uint16_t frequency) {
 	TIFR1  |= _BV(OCF1A);   // clear timer compare flag
 	TIMSK1 |= (1 << OCIE1A);
 
-	// Allows interrupts		
+	// Allows interrupts
 	sei();
 }
 
@@ -194,7 +194,7 @@ void setupTimer2(uint16_t frequency) {
 	// Enable the timer compare interrupt
 	TIMSK2 |= (1 << OCIE2A);
 
-	// Allows interrupts		
+	// Allows interrupts
 	sei();
 }
 

@@ -1,8 +1,8 @@
 /* * * * * * * * * * * * * * * * * * * * * * *
  * Example Code for Queue Class
  *
- * Code by: Simon B.
- * Email:   hello@chillibasket.com
+ * Code by:  Simon Bluett
+ * Email:    hello@chillibasket.com
  * * * * * * * * * * * * * * * * * * * * * * */
 
 // Include the queue class
@@ -77,5 +77,4 @@ void loop() {
 		Serial.print(nextItem.time); Serial.print(", ");
 		Serial.println(nextItem.finalPrice);
 	}
-	
 }

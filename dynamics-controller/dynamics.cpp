@@ -1,42 +1,29 @@
 /* * * * * * * * * * * * * * * * * * * * * * *
  * DYNAMICS CONTROLLER CLASS
  *
- * Code by: Simon B.
+ * Code by: Simon Bluett
  * Email:   hello@chillibasket.com
+ * Version: 1.1
+ * Date: 26th April 2020
  * * * * * * * * * * * * * * * * * * * * * * */
 
 #include "dynamics.hpp"
 
 /*
  * \Func  Dynamics::Dynamics()
- * \Desc  Default constructor
+ * \Desc  Constructor
  */
-Dynamics::Dynamics() {
-	Dynamics(0, 0, 0, 0, 0.5);
-}
-
-// System type specified
-Dynamics::Dynamics(int _type) {
-	Dynamics(_type, 0, 0, 0, 0.5);
-}
-
-// System type, max velocity and acceleration specified
-Dynamics::Dynamics(int _type, float _maxVel, float _acc) {
-	Dynamics(_type, _maxVel, _acc, _acc, 0.5);
-}
-
-// System type, max velocity, acceleration and deceleration specified
-Dynamics::Dynamics(int _type, float _maxVel, float _acc, float _dec) {
-	Dynamics(_type, _maxVel, _acc, _dec, 0.5);
-}
-
 // System type, max velocity, acceleration, deceleration and threshold specified
 Dynamics::Dynamics(int _type, float _maxVel, float _acc, float _dec, float _thresh) {
 	type = _type;
-	targetPos = targetVel = curPos = curVel = 0;
+	targetPos = 0;
+	targetVel = 0;
+	curPos = 0;
+	curVel = 0;
 	maxVel = _maxVel;
 	acc = _acc;
-	dec = _dec;
+	if (_dec == -1) dec = _acc;
+	else dec = _dec;
 	scale = 1;
 	oldTime = millis();
 	threshold = _thresh;
@@ -45,11 +32,11 @@ Dynamics::Dynamics(int _type, float _maxVel, float _acc, float _dec, float _thre
 
 
 /*
- * \Func  ~Dynamics()
- * \Desc  Default destructer
+ * \Func  Dynamics::~Dynamics()
+ * \Desc  Default Destructor
  */
 Dynamics::~Dynamics() {
-
+	// Empty
 }
 
 
@@ -62,13 +49,8 @@ void Dynamics::setTargetPos(float _targetPos, float _scale) {
 	targetPos = _targetPos;
 	scale = _scale;
 	type = 0;
-	curPos = 0;
+	//curPos = 0;
 	noTasks = false;
-}
-
-// Overload function; assume scale=1
-void Dynamics::setTargetPos(float _target) {
-	setTargetPos(_target, 1);
 }
 
 
@@ -88,12 +70,15 @@ void Dynamics::setTargetVel(float _targetVel) {
 
 
 /*
- * \Func  float Dynamics::updateVal(float dT)
+ * \Func  float Dynamics::update(float dT)
  * \Desc  Update the current position according to the kinematic formulae
- * \Para  (dT) The time change since function was last called
+ * \Para  (dT) The time change in milliseconds since function was last called
  * \Retu  THe new position of the system
  */
-float Dynamics::updateVal(float dT) {
+float Dynamics::update(float dT) {
+
+	// Convert ms to seconds
+	dT /= 1000.0;
 
 	// Position Control (Linear velocity with parabolic blends)
 	if (type == 0) {
@@ -109,18 +94,19 @@ float Dynamics::updateVal(float dT) {
 
 			// Determine whether to accelerate or decelerate
 			float acceleration = acc;
-			if ((0.5 * curVel * curVel / dec) > abs(posError)) acceleration = -dec;
+			if ((0.5 * curVel * curVel / dec) >= abs(posError)) acceleration = -dec;
 
 			// Update the current velocity
-			if (dir) curVel += acceleration * dT / 1000.0;
-			else curVel -= acceleration * dT / 1000.0;
+			if (dir) curVel += acceleration * dT;
+			else curVel -= acceleration * dT;
 
 			// Limit Velocity
 			if (curVel > maxVel) curVel = maxVel;
-			if (curVel < -maxVel) curVel = -maxVel;
+			else if (curVel < -maxVel) curVel = -maxVel;
 			
-			float dP = curVel * dT / 1000.0;
+			float dP = curVel * dT;
 
+			// Prevent overshooting/jittering around target
 			if (abs(dP) < abs(posError)) curPos += dP;
 			else curPos = targetPos;
 
@@ -144,7 +130,7 @@ float Dynamics::updateVal(float dT) {
 			else if (targetVel > curVel && curVel < 0) acceleration = dec;
 
 			// Update the current velocity
-			float dV = acceleration * dT / 1000.0;
+			float dV = acceleration * dT;
 			if (abs(dV) < abs(velError)) curVel += dV;
 			else curVel = targetVel;
 
@@ -154,10 +140,10 @@ float Dynamics::updateVal(float dT) {
 		
 		// Limit Velocity
 		if (curVel > maxVel) curVel = maxVel;
-		if (curVel < -maxVel) curVel = -maxVel;
+		else if (curVel < -maxVel) curVel = -maxVel;
 
 		// Update current position
-		curPos += curVel * dT / 1000.0;
+		curPos += curVel * dT;
 	}
 
 	if (isnan(curPos)) {
@@ -165,16 +151,17 @@ float Dynamics::updateVal(float dT) {
 		curPos = targetPos;
 	}
 
+	Serial.print(curPos); Serial.print(","); Serial.println(curVel);
 	return curPos * scale;
 }
 
 // Overloaded "update" function, were the time change has not been specified
-float Dynamics::updateVal() {
+float Dynamics::update() {
 	// Calculate Time Change
 	unsigned long newTime = millis();
-	double dT = double(newTime - oldTime);
+	float dT = float(newTime - oldTime);
 	oldTime = newTime;
-	return updateVal(dT);
+	return update(dT);
 }
 
 
@@ -183,8 +170,8 @@ float Dynamics::updateVal() {
  * \Func  void Dynamics::reset()
  * \Desc  Reset all the runtime variables
  */
-void Dynamics::reset() { 
-	curPos = 0;
+void Dynamics::reset(float newPos) { 
+	curPos = newPos;
 	curVel = 0;
 	targetPos = 0;
 	targetVel = 0;
@@ -197,8 +184,8 @@ void Dynamics::reset() {
  * \Func  void Dynamics::resetPos()
  * \Desc  Reset the current position
  */
-void Dynamics::resetPos() {
-	curPos = 0;
+void Dynamics::resetPos(float newPos) {
+	curPos = newPos;
 }
 
 

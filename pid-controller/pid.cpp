@@ -1,7 +1,7 @@
 /* * * * * * * * * * * * * * * * * * * * * * *
  * PID CONTROLLER CLASS
  *
- * Code by: Simon B.
+ * Code by: Simon Bluett
  * Email:   hello@chillibasket.com
  * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -80,7 +80,7 @@ void PID::reset() {
  * \Para  (dT) Time since PID value was last updated
  * \Retu  The new PID output value
  */
-float PID::updateVal(float target, float current, float dT) {
+float PID::update(float target, float current, float dT) {
 	// Calculate Error
 	float error = target - current;
 	float pid = 0;
@@ -103,15 +103,17 @@ float PID::updateVal(float target, float current, float dT) {
 		pid = (error * Kp) + (iTerm * Ki) - (dTerm * Kd);
 
 		// Limit PID value to maximum values
-		if (maxPID > 0 && pid > maxPID) pid = maxPID;
-		else if (maxPID > 0 && pid < -maxPID) pid = -maxPID;
+		if (maxPID > 0) {
+			if (pid > maxPID) pid = maxPID;
+			else if (pid < -maxPID) pid = -maxPID;
+		}
 	}
 
 	return pid;
 }
 
 // Overloaded "update" function, were the time change has not been specified
-float PID::updateVal(float target, float current) {
+float PID::update(float target, float current) {
 	// Calculate Time Change
 	// Using float to avoid integer division
 	unsigned long newTime = millis();

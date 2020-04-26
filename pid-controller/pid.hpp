@@ -1,7 +1,7 @@
 /* * * * * * * * * * * * * * * * * * * * * * *
  * PID CONTROLLER CLASS HEADER
  *
- * Code by: Simon B.
+ * Code by: Simon Bluett
  * Email:   hello@chillibasket.com
  * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -33,8 +33,8 @@ public:
 	float getMax() { return maxPID; };
 	float getThresh() { return threshold; };
 	void  reset();
-	float updateVal(float target, float current, float dT);
-	float updateVal(float target, float current);
+	float update(float target, float current, float dT);
+	float update(float target, float current);
 
 	// Default destructor
 	~PID(); 
