@@ -94,7 +94,7 @@ float Dynamics::update(float dT) {
 
 			// Determine whether to accelerate or decelerate
 			float acceleration = acc;
-			if ((0.5 * curVel * curVel / dec) >= abs(posError)) acceleration = -dec;
+			if ((curVel * curVel / (2 * dec)) >= abs(posError)) acceleration = -dec;
 
 			// Update the current velocity
 			if (dir) curVel += acceleration * dT;
@@ -146,10 +146,10 @@ float Dynamics::update(float dT) {
 		curPos += curVel * dT;
 	}
 
-	if (isnan(curPos)) {
-		Serial.println("ERROR: invalid position number...");
-		curPos = targetPos;
-	}
+	//if (isnan(curPos)) {
+	//	Serial.println("ERROR: invalid position number...");
+	//	curPos = targetPos;
+	//}
 
 	return curPos * scale;
 }
