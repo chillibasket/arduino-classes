@@ -3,6 +3,9 @@
  *
  * Code by:  Simon Bluett
  * Email:    hello@chillibasket.com
+ * Version:  1.1
+ * Date:     20th June 2020
+ * Copyright (C) 2020, MIT License
  * * * * * * * * * * * * * * * * * * * * * * */
 
 // Include the queue class
@@ -21,17 +24,31 @@ struct Receipt {
 Queue <Receipt> queue(30);
 
 
-/* SETUP */
+/**
+ * Setup function
+ */
 void setup() {
+	// Start serial communication
 	Serial.begin(9600);
-	delay(5000);
-	Serial.println("Starting Test");
+	while(!Serial);
+	Serial.println("");
 
+	// Check if the queue class was not able to allocate sufficient
+	// space in memory, then stop the sketch early
+	if (queue.errors()) {
+		Serial.println("Error: queue was unable to allocate space in memeory");
+		while(1);
+	}
+
+	// Otherwise, let's start the test
+	Serial.println("--- Starting Test ---");
 	addToQueue();
 }
 
 
-/* ADD ITEMS TO QUEUE */
+/**
+ * Add new items to the queue
+ */
 void addToQueue() {
 
 	// Try adding 40 items onto the queue
@@ -57,10 +74,12 @@ void addToQueue() {
 }
 
 
-/* MAIN LOOP */
+/**
+ * Main program loop
+ */
 void loop() {
 
-	// Empty the queue
+	// Keep poping items off the queue until it is empty
 	if (!queue.empty()) {
 		
 		Serial.print("Queue Size: "); Serial.print(queue.size());
