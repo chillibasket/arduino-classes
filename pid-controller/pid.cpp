@@ -3,29 +3,23 @@
  *
  * Code by: Simon Bluett
  * Email:   hello@chillibasket.com
+ * Version: 1.1
+ * Date:    3rd July 2020
+ * Copyright (C) 2020, MIT License
  * * * * * * * * * * * * * * * * * * * * * * */
 
 #include "pid.hpp"
 
-/*
- * \Func  PID::PID()
- * \Desc  Default constructor
+
+/**
+ * PID Default Constructor
+ * 
+ * @param  (nP) Proportional gain term, default = 0.1
+ * @param  (nI) Integral gain term, default = 0
+ * @param  (nD) Derivative gain term, default = 0
+ * @param  (maxVal) Maximum PID output value, default = -1 (disabled)
+ * @param  (thresh) Error cut-off threshold, default = -1 (disabled)
  */
-PID::PID(){
-	PID(0, 0, 0, -1, -1);
-}
-
-// Constructor with gains defined
-PID::PID(float nP, float nI, float nD){
-	PID(nP, nI, nD, -1, -1);
-}
-
-// Constructor with gains and max PID value defined
-PID::PID(float nP, float nI, float nD, float maxVal) {
-	PID(nP, nI, nD, maxVal, -1);
-}
-
-// Constructor with gains, max PID value, and cut-off threshold defined
 PID::PID(float nP, float nI, float nD, float maxVal, float thresh) {
 	Kp = nP;
 	Ki = nI;
@@ -38,49 +32,47 @@ PID::PID(float nP, float nI, float nD, float maxVal, float thresh) {
 }
 
 
-/*
- * \Func  ~PID::PID()
- * \Desc  Default destructer
+/**
+ * Default destructer
  */
 PID::~PID(){
 
 }
 
 
-/*
- * \Func  void PID::setConst(float nP, float nI, float nD)
- * \Desc  Update the PID constant gain terms
- * \Para  (nP) New proportional gain
- * \Para  (nI) New integral gain
- * \Para  (nD) New derivative gain
+/**
+ * Set new PID gain terms
+ *
+ * @param  (nP) New proportional gain
+ * @param  (nI) New integral gain
+ * @param  (nD) New derivative gain
  */
-void PID::setConst(float nP, float nI, float nD) {
+void PID::setGain(float nP, float nI, float nD) {
 	Kp = nP;
 	Ki = nI;
 	Kd = nD;
 }
 
 
-/*
- * \Func  void PID::reset()
- * \Desc  Reset the PID controller accumulators
+/**
+ * Reset the PID controller accumulators
  */
 void PID::reset() {
-	oldCurrent = 0;
 	iTerm = 0;
 	oldTime = millis();
 }
 
 
-/*
- * \Func  void PID::update(float target, float current, float dT)
- * \Desc  Calculate a new PID output value
- * \Para  (target) The target position of the system
- * \Para  (current) The current position of the system
- * \Para  (dT) Time since PID value was last updated
- * \Retu  The new PID output value
+/**
+ * Calculate new PID controller output
+ *
+ * @param  (target) The target position of the system
+ * @param  (current) The current position of the system
+ * @param  (dT) Time since PID value was last updated
+ * @return The new PID output value
  */
 float PID::update(float target, float current, float dT) {
+
 	// Calculate Error
 	float error = target - current;
 	float pid = 0;
@@ -114,8 +106,8 @@ float PID::update(float target, float current, float dT) {
 
 // Overloaded "update" function, were the time change has not been specified
 float PID::update(float target, float current) {
+
 	// Calculate Time Change
-	// Using float to avoid integer division
 	unsigned long newTime = millis();
 	float dT = float(newTime - oldTime);
 	oldTime = newTime;
