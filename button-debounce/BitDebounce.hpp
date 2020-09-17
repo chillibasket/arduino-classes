@@ -31,22 +31,26 @@ struct BitDebounceFlags {
  */
 class BitDebounce {
 public:
+	// Constructor and destructor
 	BitDebounce(uint8_t pin, bool pullup);
 	~BitDebounce();
 
+	// Update button reading
 	bool update();
+
+	// Functions to check for current state
 	bool read();
 	bool onChange();
 	bool onRisingEdge();
 	bool onFallingEdge();
 
+	// Button press counter functions
 	void reset();
 	uint16_t count();
 
 private:
 	struct BitDebounceFlags flags;
 	uint8_t buttonHistory;
-	//uint16_t changeCounter;
 	const uint8_t buttonPin;
 };
 

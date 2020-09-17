@@ -38,7 +38,7 @@ Both classes have the exact same functions and can be used in the same way (apar
 1. `onChange()` Return TRUE if a rising or falling edge was detected. Note that this function cannot be used at the same time as `onRisingEdge()` or `onFallingEdge()`, since the change detection flag is reset to prevent the same edge from being detected multiple times.
 1. `onRisingEdge()` Returns TRUE if a rising edge was detected (transition from LOW state to HIGH state)
 1. `onFallingEdge()` Returns TRUE if a falling edge was detected (transition from HIGH state to LOW state)
-1. `count()` Returns the total number of button clicks `(presses + releases) / 2` recorded. Note that this value reset to 0 after `16383` clicks using <BitDebounce.hpp> and after `8191` clicks using <TimeDebounce.hpp>.
+1. `count()` Returns the total number of button clicks `(presses + releases) / 2` recorded. Note that this value resets back to 0 after `16383` clicks using <BitDebounce.hpp> and after `8191` clicks using <TimeDebounce.hpp>.
 1. `reset()` Resets the click counter back to zero.
 <br />
 <br />

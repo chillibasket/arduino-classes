@@ -12,6 +12,16 @@
  *
  * @see      <BitDebounce.hpp>
  * @see      <TimeDebounce.hpp>
+ *
+ * When using buttons, the signal being read at the digital
+ * input pin of the Arduino needs to be "debounced" to remove
+ * spurious signals during the transition which could be 
+ * misinterpreted as multiple button clicks.
+ *
+ * This sketch demonstrates the use of two different button
+ * debounce classes which I wrote to solve this problem:
+ * <TimeDebounce.hpp> Uses a timer=based method
+ * <BitDebounce.hpp>  Uses a more efficient bit-history method
  * * * * * * * * * * * * * * * * * * * * * * */
 
 #include "BitDebounce.hpp"
