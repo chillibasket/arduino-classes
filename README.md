@@ -28,12 +28,12 @@ Basic implementation of a Proportional, Integral and Derivative controller. The 
 <br />
 
 ## Button Debounce
-When pressing a button and reading the signal with the digital pins of an Arduino, the signal may be noisy during the transition. Often when pressing or releasing the button, the voltage signal oscillates (bounces) a few times before settling at the new state. This can cause the Arduino to think that the button was pressed multiple times! To avoid this, we need to use a "Debounce" algorithm to remove this spurious signals and get a more stable reading of the current button state. To achieve this, I've put together two classes which achieve the same goal but in slightly different ways...
+When pressing a button and reading the signal with the digital pins of an Arduino, the signal may be noisy during the transition. Often when pressing or releasing the button, the voltage signal oscillates (bounces) a few times before settling at the new state. This can cause the Arduino to think that the button was pressed multiple times! To avoid this, we need to use a "Debounce" algorithm to remove these spurious signals and get a more stable reading of the current button state. To achieve this, I've put together two classes which achieve the same goal but in slightly different ways...
 1. **<TimeDebounce.hpp>** This class implements a traditional approach, using a timer. The digital reading of the button needs to remain the same for the entire duration of the timer (default time is 50 milliseconds) before the button state is updated. If the state bounces during this time period, the timer is reset and starts again.
 1. **<BitDebounce.hpp>** This class is slightly faster and more efficient, looking at the history of button readings to determine whether to change the button state. The class saves the last 8 button readings (which can conveniently be stored in one byte), and changes the state if it detects three consecutive readings of the new value.
 
 Both classes have the exact same functions and can be used in the same way (apart from the constructor). Check out the `<button-debounce.ino>` sample sketch to see how the classes can be used in practice. The functions are:
-1. `update()` Read the latest digital value of the button and figure out if it has changed state. This functions returns TRUE/FALSE depending on whether the class thinks the (debounced_ button state is HIGH/LOW.
+1. `update()` Read the latest digital value of the button and figure out if it has changed state. This functions returns TRUE/FALSE depending on whether the class thinks the (debounced) button state is HIGH/LOW. This function should be called at regular intervals and before calling any of the read()/onChange()/onRisingEdge()/onFallingEdge() functions.
 1. `read()` This function does not test/update the digital readings from the button, but simple returns TRUE/FALSE depending on whether the class thinks the (debounced) button state is HIGH/LOW.
 1. `onChange()` Return TRUE if a rising or falling edge was detected. Note that this function cannot be used at the same time as `onRisingEdge()` or `onFallingEdge()`, since the change detection flag is reset to prevent the same edge from being detected multiple times.
 1. `onRisingEdge()` Returns TRUE if a rising edge was detected (transition from LOW state to HIGH state)
@@ -58,4 +58,4 @@ A template queue class that can be set up to work with items of any data type. I
 1. Include the library, substituting in the correct file name: `#include "header_filename.hpp"`.
 1. Instantiate the objects: `ClassType newObjectName(variables)`. Make sure to follow the correct format of the constructor as defined in the relevant class code.
 
-Additional example sketches are included with the *Dynamics Controller* and *Generic Queue* classes to show in more detail how the classes can be used.
+Additional example sketches are included with the *Servo Trajectory Controller*, *Button Debounce* and *Generic Queue* classes to show in more detail how the classes can be used.
