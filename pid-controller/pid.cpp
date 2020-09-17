@@ -112,5 +112,5 @@ float PID::update(float target, float current) {
 	float dT = float(newTime - oldTime);
 	oldTime = newTime;
 	
-	return updateVal(target, current, dT);
+	return update(target, current, dT);
 }
