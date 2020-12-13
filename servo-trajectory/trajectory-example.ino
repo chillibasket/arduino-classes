@@ -89,6 +89,8 @@ void setup() {
 	//float maxVelocity = servoTrajectory.getMaxVel();
 	//float acceleration = servoTrajectory.getAcc();
 	//float deceleration = servoTrajectory.getDec();
+
+	updateTimer = millis();
 }
 
 
@@ -133,9 +135,8 @@ void nextMove() {
 void loop() {
 
 	// Update the servo position at regular intervals
-	if (updateTimer <= millis()) {
-		if (updateTimer <= millis() - UPDATE_TIME) updateTimer = millis() + UPDATE_TIME;
-		else updateTimer += UPDATE_TIME;
+	if (millis() - updateTimer >= UPDATE_TIME) {
+		updateTimer += UPDATE_TIME;
 
 		// Update the controller
 		float currentAngle = servoTrajectory.update();
