@@ -33,6 +33,6 @@ void setup() {
 void loop() {
 	if (lastCount != myEncoder.getCount()) {
 		lastCount = myEncoder.getCount();
-		//Serial.println(lastCount);
+		Serial.println(lastCount);
 	}
 }

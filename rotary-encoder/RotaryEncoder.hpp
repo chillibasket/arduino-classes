@@ -58,8 +58,6 @@ private:
  * @param  pinA          The I/O pin used for encoder count A
  * @param  pinB          The I/O pin used for encoder count B
  * @param  pullup        Whether to enable the internal pullups
- * @param  useInterruptA Call the interrupt when signal A changes state
- * @param  useInterruptB Call the interrupt when signal B changes state
  *
  * @note Using interrupts on both pins provides the highest resolution
  *       angle measurement, however uses up two interrupt pins. If 
@@ -97,9 +95,9 @@ void RotaryEncoder::begin(boolean bothEdges, void (interruptFunction)(void) = NU
 	outputCounter = 0;
 
 	if (interruptFunction != NULL) {
-		scaleFactor = 1;
+		scaleFactor = 2;
 		attachInterrupt(digitalPinToInterrupt(signalPinA), interruptFunction, CHANGE);
-		//attachInterrupt(digitalPinToInterrupt(signalPinB), interruptFunction, CHANGE);
+		attachInterrupt(digitalPinToInterrupt(signalPinB), interruptFunction, CHANGE);
 	}
 }
 
@@ -155,7 +153,7 @@ void RotaryEncoder::reset() {
 
 
 /**
- * Exncoder interrupt service routine (ISR)
+ * Encoder interrupt service routine (ISR)
  */
 void RotaryEncoder::interruptSignal() {
 
@@ -206,14 +204,14 @@ void RotaryEncoder::interruptSignal() {
 	bool signalB = digitalRead(signalPinB);
 
 	// All edges detection mode
-	//stepCounter += (lastStateB ^ signalA) - (lastStateA ^ signalB);
+	stepCounter += (lastStateB ^ signalA) - (lastStateA ^ signalB);
 
 	// Only signal A edges detection mode
 	
-	if ((lastStateA ^ signalA) && (lastStateB ^ signalB)) {
-		if (lastStateB ^ lastStateA) stepCounter++;
-		else stepCounter--;
-	}// else {
+	//if ((lastStateA ^ signalA) && (lastStateB ^ signalB)) {
+	//	if (lastStateB ^ lastStateA) stepCounter++;
+	//	else stepCounter--;
+	//} else {
 	//	Serial.println("Disregard");
 	//}*/
 
@@ -221,12 +219,12 @@ void RotaryEncoder::interruptSignal() {
 		outputCounter = stepCounter >> scaleFactor;
 	}
 
-	Serial.print(lastStateA); Serial.print(",");
-	Serial.print(signalB); Serial.print(",");
-	Serial.print(lastStateB); Serial.print(",");
-	Serial.print(signalA); Serial.print(" - ");
-	Serial.print(stepCounter); Serial.print(" - ");
-	Serial.println(outputCounter);
+	//Serial.print(lastStateA); Serial.print(",");
+	//Serial.print(signalB); Serial.print(",");
+	//Serial.print(lastStateB); Serial.print(",");
+	//Serial.print(signalA); Serial.print(" - ");
+	//Serial.print(stepCounter); Serial.print(" - ");
+	//Serial.println(outputCounter);
 
 	lastStateA = signalA;
 	lastStateB = signalB;
