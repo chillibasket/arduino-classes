@@ -11,6 +11,7 @@
 // Include the queue class
 #include "Queue.hpp"
 
+
 // An example data structure
 struct Receipt {
 	int transactionID;
@@ -19,9 +20,20 @@ struct Receipt {
 	float finalPrice;
 };
 
-// Instantiate a queue for this data structure,
-// with a capacity of 30 items
+
+/**
+ * Instantiate a queue for this data structure,
+ * with a capacity of 30 items
+ */
 Queue <Receipt> queue(30);
+
+
+/**
+ * If this code is being used on a microcontroller, we can
+ * define a global buffer to avoid dynamic memory allocation
+ */
+//Receipt buffer[30];
+//Queue <Receipt> queue(30, buffer);
 
 
 /**
@@ -64,6 +76,10 @@ void addToQueue() {
 		queue.push(newTransaction);
 	}
 
+	// Check the size of the queue
+	Serial.print("Queue Size: ");
+	Serial.println(queue.size());
+
 	// See what the ID of the item at the front of the queue is
 	Serial.print("Item ID at Front: ");
 	Serial.println(queue.front().transactionID);
@@ -71,6 +87,21 @@ void addToQueue() {
 	// And at the back
 	Serial.print("Item ID at Back: ");
 	Serial.println(queue.back().transactionID);
+
+	// See item at index 5
+	Serial.print("Item at index 5: ");
+	Serial.println(queue.get(5).transactionID);
+
+	// Remove item from index 5
+	queue.remove(5);
+
+	// Check the new size of the queue
+	Serial.print("Queue Size: ");
+	Serial.println(queue.size());
+
+	// See the new item at index 5
+	Serial.print("New item at index 5: ");
+	Serial.println(queue.get(5).transactionID);
 }
 
 
@@ -79,15 +110,15 @@ void addToQueue() {
  */
 void loop() {
 
-	// Keep poping items off the queue until it is empty
+	// Keep poping items off the front queue until it is empty
 	if (!queue.empty()) {
 		
 		Serial.print("Queue Size: "); Serial.print(queue.size());
 		
-		// To use as a FIFO queue
+		// To use as a First-in-first-out (FIFO) queue
 		Receipt nextItem = queue.pop();
 
-		// To use as a LIFO queue
+		// To use as a Last-in-first-out (LIFO) queue
 		//Receipt nextItem = queue.pop_back();
 
 		Serial.print(", Pop Item: ");
