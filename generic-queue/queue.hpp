@@ -1,28 +1,39 @@
 /* * * * * * * * * * * * * * * * * * * * * * *
  * GENERIC QUEUE CLASS
- * Ring Buffer, for use as FIFO or LIFO queue
+ * @brief     Ring Buffer, for use as FIFO or LIFO queue
  *
- * Code by:  Simon Bluett
- * Email:    hello@chillibasket.com
- * Version:  1.2
- * Date:     7th August 2020
- * Copyright (C) 2020, MIT License
+ * @file      Queue.hpp
+ * @author    Simon Bluett
+ * @website   https://wired.chillibasket.com/
+ *
+ * @version   1.2
+ * @date      7th August 2020
+ * @copyright Copyright (C) 2020, MIT License
  * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifndef QUEUE_HPP
-#define QUEUE_HPP
+#ifndef GENERIC_QUEUE_HPP
+#define GENERIC_QUEUE_HPP
 
 
-/* Uncomment next line to allow size of queue to be dynamically increased */
-//#define DYNAMIC_SIZE
+/**
+ * Uncomment next line to allow size of queue to be dynamically increased
+ */
+//#define DYNAMIC_QUEUE_RESIZING
 
 
-// QUEUE CLASS DEFINITION
+/**
+ * Queue Class Definition
+ */
 template<class T>
 class Queue {
 
 public:
-	// Default Constructor
+	/**
+	 * Constructor
+	 *
+	 * @param  max     The maximum queue size
+	 * @param  buffer  Pointer to the queue buffer (optional)
+	 */
 	Queue(int max = 50, T *buffer = NULL) {
 		qFront = 0;
 		qBack = 0;
@@ -38,7 +49,11 @@ public:
 		else warning = false;
 	};
 
-	// Default destructor
+
+	/**
+	 * Default Destructor
+	 * Delete the queue buffer
+	 */
 	~Queue() {
 		delete[] qData;
 	};
@@ -50,17 +65,21 @@ public:
 	T front();
 	T peek();
 	T back();
+	T get(int itemIndex);
 
 	// Management Functions
 	bool empty();
 	inline int size();
 	void clear();
+	void remove(int itemIndex);
+
+	/**
+	 * Return error if dynamic buffer allocation failed
+	 */
 	bool errors() { return warning; };
 
-	
-
 private:
-	int qFront, qBack, qSize, maxSize;
+	unsigned int qFront, qBack, qSize, maxSize;
 	bool warning;
 	T *qData;
 };
@@ -93,7 +112,7 @@ template<class T> void Queue<T>::push(const T &item) {
 		if (qBack >= maxSize) qBack -= maxSize;
 	}
 
-#ifdef DYNAMIC_SIZE
+#ifdef DYNAMIC_QUEUE_RESIZING
 	// If queue can dynamically allocate more memory, increase size of queue
 	else {
 		// Create a queue which is twice the size
@@ -118,7 +137,7 @@ template<class T> void Queue<T>::push(const T &item) {
 		// Add the new item
 		push(item);
 	}
-#endif /* DYNAMIC_SIZE */
+#endif /* DYNAMIC_QUEUE_RESIZING */
 }
 
 
@@ -191,11 +210,47 @@ template<class T> T Queue<T>::peek() {
  * @return The item at the back of the queue
  */
 template<class T> T Queue<T>::back() {
-	if(qSize <= 0) return T();
+	if (qSize <= 0) return T();
 	else {
 		int item = qBack - 1;
 		if (item < 0) item += maxSize;
 		return qData[item];
+	}
+}
+
+
+/**
+ * Get the value of an item at a specific index in the queue
+ *
+ * @param  itemIndex The index number of the item of interest
+ */
+template<class T> T Queue<T>::get(int itemIndex) {
+	
+	// Check if index is valid
+	if (itemIndex > 0 && itemIndex < qSize) {
+		return qData[(qFront + itemIndex) % maxSize];
+	}
+	return T();
+}
+
+
+/**
+ * Remove an item from the queue
+ *
+ * @param  itemIndex The index number of the item to be removed
+ */
+template<class T> void Queue<T>::remove(int itemIndex) {
+	
+	// Check if index is valid
+	if (itemIndex > 0 && itemIndex < qSize) {
+
+		// Move all subsequent items down by one space
+		for (int i = itemIndex; i < qSize - 1; i++) {
+			qData[(qFront + i) % maxSize] = qData[(qFront + i + 1) % maxSize];
+		}
+
+		// Remove the last item from the queue
+		pop_back();
 	}
 }
 
@@ -219,4 +274,4 @@ template<class T> void Queue<T>::clear() {
 	qSize = 0;
 }
 
-#endif /* QUEUE_HPP */
+#endif /* GENERIC_QUEUE_HPP */
