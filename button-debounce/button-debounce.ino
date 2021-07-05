@@ -1,17 +1,17 @@
 /* * * * * * * * * * * * * * * * * * * * * * *
  * Button Debounce Classes Example Sketch
  *
- * @file     button-debounce.ino
- * @brief    Demonstrate how the button debounce classes can be used
- * @author   Simon Bluett
- * @website  https://wired.chillibasket.com/
+ * @file      button-debounce.ino
+ * @brief     Demonstrate how the button debounce classes can be used
+ * @author    Simon Bluett
+ * @website   https://wired.chillibasket.com/
  *
- * @license  Copyright (C) 2020 - MIT License
- * @date     16th September 2020
- * @version  1.0
+ * @copyright Copyright (C) 2021 - MIT License
+ * @date      6th February 2021
+ * @version   1.1
  *
- * @see      <BitDebounce.hpp>
- * @see      <TimeDebounce.hpp>
+ * @see       <BitDebounce.hpp>
+ * @see       <TimeDebounce.hpp>
  *
  * When using buttons, the signal being read at the digital
  * input pin of the Arduino needs to be "debounced" to remove
@@ -20,7 +20,7 @@
  *
  * This sketch demonstrates the use of two different button
  * debounce classes which I wrote to solve this problem:
- * <TimeDebounce.hpp> Uses a timer=based method
+ * <TimeDebounce.hpp> Uses a timer-based method
  * <BitDebounce.hpp>  Uses a more efficient bit-history method
  * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -28,10 +28,10 @@
 #include "TimeDebounce.hpp"
 
 /* Create button objects */
-// (Pin, Use Internal Pullup)
-BitDebounce  button2( 2, true );
-// (Pin, Timer length (ms), Use Internal Pullup)
-TimeDebounce button3( 3, 50, true );
+// (Pin)
+BitDebounce  button2( 2 );
+// (Pin, Timer length (ms))
+TimeDebounce button3( 3, 50 );
 
 unsigned long loopTimer = 0;
 
@@ -40,8 +40,13 @@ unsigned long loopTimer = 0;
  * Setup Code
  */
 void setup() {
-	// The pinMode() of the buttons is already set in the constructor 
-	// of the debounce classes, so no need to do it again here...
+
+	// Start the button debounce objects; here we need to specify
+	// whether the button should be use INPUT_PULLUP
+	button2.begin( true );
+	button3.begin( true );
+
+
 	pinMode(LED_BUILTIN, OUTPUT);
 	Serial.begin(9600);
 }

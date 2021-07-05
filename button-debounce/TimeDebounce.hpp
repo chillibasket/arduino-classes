@@ -1,14 +1,14 @@
 /* * * * * * * * * * * * * * * * * * * * * * *
  * Timer-based Debounce Class Header File
  *
- * @file     TimeDebounce.hpp
- * @brief    Uses a timer to debounce the button state
- * @author   Simon Bluett
- * @website  https://wired.chillibasket.com/
+ * @file      TimeDebounce.hpp
+ * @brief     Uses a timer to debounce the button state
+ * @author    Simon Bluett
+ * @website   https://wired.chillibasket.com/
  *
- * @license  Copyright (C) 2020 - MIT License
- * @date     16th September 2020
- * @version  1.0
+ * @copyright Copyright (C) 2021 - MIT License
+ * @date      6th February 2021
+ * @version   1.1
  *
  * Based on the Debounce Class by wkoch:
  * https://github.com/wkoch/Debounce
@@ -36,8 +36,11 @@ struct TimeDebounceFlags {
 class TimeDebounce {
 public:
 	// Constructor and destructor
-	TimeDebounce(uint8_t pin, uint8_t delay, bool pullup);
+	TimeDebounce(uint8_t pin, uint8_t delay = 50);
 	~TimeDebounce();
+
+	// Initialise the button
+	void begin(bool enablePullup = true);
 
 	// Update button reading
 	bool update();
@@ -61,23 +64,16 @@ private:
 
 
 /**
- * Default Constructor
+ * Constructor
  *
  * @param  pin    The I/O pin used for the button
- * @param  delay  Time in milliseconds for the debounce
- * @param  pullup True = use INPUT_PULLUP, False = use INPUT
+ * @param  delay  Time in milliseconds for the debounce (defaut = 50)
  */
-TimeDebounce::TimeDebounce(uint8_t pin, uint8_t delay = 50, bool pullup = true)
+TimeDebounce::TimeDebounce(uint8_t pin, uint8_t delay)
 	: buttonPin(pin)
 	, debounceDelay(delay)
 {
-	pinMode(buttonPin, (pullup)? INPUT_PULLUP : INPUT);
-	const bool readState = digitalRead(buttonPin);
-	debounceTimer = 0;
-	flags.currentState = readState;
-	flags.waiting = false;
-	flags.changeCounter = 0;
-	flags.changeDetected = false;
+	// Empty, as all initialisation is done in the begin() function
 }
 
 
@@ -86,6 +82,26 @@ TimeDebounce::TimeDebounce(uint8_t pin, uint8_t delay = 50, bool pullup = true)
  */
 TimeDebounce::~TimeDebounce() {
 	// Empty - no dynamic memory used
+}
+
+
+/**
+ * Initialise the button pins
+ *
+ * @param enablePullup  Whether to enable the internal pullup (default = true)
+ */
+void TimeDebounce::begin(bool enablePullup) {
+	
+	// Setup the pin
+	pinMode(buttonPin, (enablePullup)? INPUT_PULLUP : INPUT);
+
+	// Initialise other variables
+	const bool readState = digitalRead(buttonPin);
+	debounceTimer = 0;
+	flags.currentState = readState;
+	flags.waiting = false;
+	flags.changeCounter = 0;
+	flags.changeDetected = false;
 }
 
 
@@ -191,7 +207,7 @@ uint16_t TimeDebounce::count() {
  */
 void TimeDebounce::reset() {
 	// Set counter to 1 if button is currently pressed, 0 otherwise
-	flags.changeCounter = flags.currentState;
+	flags.changeCounter = !flags.currentState;
 }
 
 #endif /* TIME_DEBOUNCE_HPP */

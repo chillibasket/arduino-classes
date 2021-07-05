@@ -1,14 +1,14 @@
 /* * * * * * * * * * * * * * * * * * * * * * *
  * Bitstream-based Debounce Class Header File
  *
- * @file     BitDebounce.hpp
- * @brief    Uses 8-bit history to debounce the button state
- * @author   Simon Bluett
- * @website  https://wired.chillibasket.com/
+ * @file      BitDebounce.hpp
+ * @brief     Uses 8-bit history to debounce the button state
+ * @author    Simon Bluett
+ * @website   https://wired.chillibasket.com/
  *
- * @license  Copyright (C) 2020 - MIT License
- * @date     16th September 2020
- * @version  1.0
+ * @copyright Copyright (C) 2021 - MIT License
+ * @date      6th February 2021
+ * @version   1.1
  *
  * Based on the Ultimate Debouncer described by Elliot Williams:
  * https://hackaday.com/2015/12/10/embed-with-elliot-debounce-your-noisy-buttons-part-ii/
@@ -17,12 +17,17 @@
 #ifndef BIT_DEBOUNCE_HPP
 #define BIT_DEBOUNCE_HPP
 
+/* To turn off the click counter, comment out the next line */
+#define BIT_DEBOUNCE_COUNTER
+
 
 // Struct used to pack boolean bits
 struct BitDebounceFlags {
 	unsigned currentState   :  1;
 	unsigned changeDetected :  1;
-	unsigned changeCounter  : 14;
+	#ifdef BIT_DEBOUNCE_COUNTER
+		unsigned changeCounter  : 14;
+	#endif /* BIT_DEBOUNCE_COUNTER */
 };
 
 
@@ -32,8 +37,11 @@ struct BitDebounceFlags {
 class BitDebounce {
 public:
 	// Constructor and destructor
-	BitDebounce(uint8_t pin, bool pullup);
+	BitDebounce(uint8_t pin);
 	~BitDebounce();
+
+	// Initialise the button
+	void begin(bool enablePullup = true);
 
 	// Update button reading
 	bool update();
@@ -45,8 +53,10 @@ public:
 	bool onFallingEdge();
 
 	// Button press counter functions
-	void reset();
-	uint16_t count();
+	#ifdef BIT_DEBOUNCE_COUNTER
+		void reset();
+		uint16_t count();
+	#endif /* BIT_DEBOUNCE_COUNTER */
 
 private:
 	struct BitDebounceFlags flags;
@@ -56,20 +66,14 @@ private:
 
 
 /**
- * Default Constructor
+ * Constructor
  *
  * @param  pin The I/O pin used for the button
  */
-BitDebounce::BitDebounce(uint8_t pin, bool pullup = true)
+BitDebounce::BitDebounce(uint8_t pin)
 	: buttonPin(pin)
 {
-	pinMode(buttonPin, (pullup)? INPUT_PULLUP : INPUT);
-	const bool readState = digitalRead(buttonPin);
-	flags.currentState = readState;
-	flags.changeDetected = false;
-	flags.changeCounter = 0;
-	if (readState) buttonHistory = 0b11111111;
-	else buttonHistory = 0;
+	// Empty, as all initialisation is done in the begin() function
 }
 
 
@@ -82,25 +86,56 @@ BitDebounce::~BitDebounce() {
 
 
 /**
+ * Initialise the button pins
+ *
+ * @param enablePullup  Whether to enable the internal pullup (default = true)
+ */
+void BitDebounce::begin(bool enablePullup) {
+	
+	// Setup the pin
+	pinMode(buttonPin, (enablePullup)? INPUT_PULLUP : INPUT);
+
+	// Initialise other variables
+	const bool readState = digitalRead(buttonPin);
+	flags.currentState = readState;
+	flags.changeDetected = false;
+	#ifdef BIT_DEBOUNCE_COUNTER
+		flags.changeCounter = 0;
+	#endif /* BIT_DEBOUNCE_COUNTER */
+	if (readState) buttonHistory = 0b11111111;
+	else buttonHistory = 0;
+}
+
+
+/**
  * Update the button state
  *
  * @return Debounced button state
  */
 bool BitDebounce::update() {
-	buttonHistory = (buttonHistory << 1);
-	buttonHistory |= digitalRead(buttonPin);
 
-	if (flags.currentState) {
-		if ((buttonHistory & 0b11000111) == 0b11000000) {
-			flags.currentState = false;
-			flags.changeDetected = true;
-			flags.changeCounter++;
-		}
-	} else {
-		if ((buttonHistory & 0b11000111) == 0b00000111) {
-			flags.currentState = true;
-			flags.changeDetected = true;
-			flags.changeCounter++;
+	const bool readState = digitalRead(buttonPin);
+
+	buttonHistory = (buttonHistory << 1);
+	buttonHistory |= readState;
+
+	if (flags.currentState != readState) {
+		if (flags.currentState) {
+			if ((buttonHistory & 0b11000111) == 0b11000000 || buttonHistory == 0b00000000) {
+				flags.currentState = false;
+				flags.changeDetected = true;
+				#ifdef BIT_DEBOUNCE_COUNTER
+					flags.changeCounter++;
+				#endif /* BIT_DEBOUNCE_COUNTER */
+			}
+		} else {
+			if ((buttonHistory & 0b11000111) == 0b00000111 || buttonHistory == 0b11111111) {
+				flags.currentState = true;
+				flags.changeDetected = true;
+				#ifdef BIT_DEBOUNCE_COUNTER
+					flags.changeCounter++;
+				#endif /* BIT_DEBOUNCE_COUNTER */
+			}
 		}
 	}
 
@@ -160,6 +195,7 @@ bool BitDebounce::onFallingEdge() {
 }
 
 
+#ifdef BIT_DEBOUNCE_COUNTER
 /**
  * Count how many button clicks have occurred
  *
@@ -176,7 +212,8 @@ uint16_t BitDebounce::count() {
  */
 void BitDebounce::reset() {
 	// Set counter to 1 if button is currently pressed, 0 otherwise
-	flags.changeCounter = flags.currentState;
+	flags.changeCounter = !flags.currentState;
 }
+#endif /* BIT_DEBOUNCE_COUNTER */
 
 #endif /* BIT_DEBOUNCE_HPP */
