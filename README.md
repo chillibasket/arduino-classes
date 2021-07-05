@@ -53,6 +53,16 @@ A template queue class that can be set up to work with items of any data type. I
 <br />
 <br />
 
+## Rotary Encoder
+Library to automatically keep track of encoder steps using interrupts. This can be used for mechanical encoders used on rotary switches, or hall effect and optical encoders which are commonly used on motors. **Note: This is still a work in progress!**
+<br />
+<br />
+
+## Serial Kinematics
+When working with robotics arms which consist of a serial chain of joints and links, forward kinematics is used to calculate the position of the end effector (the tool at the end of the arm) when you know the angle of each of the joints. This library uses Denavit Hartenberg parameters to capture the position and orientation of each of the joints, and linear algebra to calculate the forward kinematics. **Note: This is still a work in progress!**
+<br />
+<br />
+
 ## Usage
 1. Copy the header (*.hpp*) and class (*.cpp*) files into the same folder as your main program code. 
 1. Include the library, substituting in the correct file name: `#include "header_filename.hpp"`.
